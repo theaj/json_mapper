@@ -33,17 +33,17 @@ dynamic _serialize(Object obj) {
   }
   
   if (obj is List) {
-    List<Object> list;
-    for (var i in obj) {
-      list.add(_serialize(obj[i]));
+    List<Object> list = new List<Object>();
+    for (var e in obj) {
+      list.add(_serialize(e));
     }
     return list;
   }
   
-  Map<String, Object> data = <String, Object> {};
+  Map<String, Object> data = new Map<String, Object>();
   if (obj is Map) {
     // what if key is not string?
-    for (var k in obj) {
+    for (var k in obj.keys) {
       data[k] = _serialize(obj[k]);
     }
     return data;
@@ -54,11 +54,11 @@ dynamic _serialize(Object obj) {
   im.type.declarations.forEach((Symbol sym, dynamic dec) {
     if (dec is mirrors.VariableMirror) {
       if (!dec.isStatic && !dec.isFinal && !dec.isPrivate) {
-        data[mirrors.MirrorSystem.getName(sym)] = im.getField(dec.simpleName).reflectee;
+        data[mirrors.MirrorSystem.getName(sym)] = _serialize(im.getField(dec.simpleName).reflectee);
       }
     } else if (dec is mirrors.MethodMirror) {
       if (dec.isGetter && !dec.isStatic && !dec.isPrivate) {
-        data[mirrors.MirrorSystem.getName(sym)] = im.getField(dec.simpleName).reflectee;
+        data[mirrors.MirrorSystem.getName(sym)] = _serialize(im.getField(dec.simpleName).reflectee);
       }
     }
   });
