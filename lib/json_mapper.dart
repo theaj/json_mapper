@@ -51,17 +51,22 @@ dynamic _serialize(Object obj) {
 
   // serializes object fields and getters.
   mirrors.InstanceMirror im = mirrors.reflect(obj);
-  im.type.declarations.forEach((Symbol sym, dynamic dec) {
-    if (dec is mirrors.VariableMirror) {
-      if (!dec.isStatic && !dec.isFinal && !dec.isPrivate) {
-        data[mirrors.MirrorSystem.getName(sym)] = _serialize(im.getField(dec.simpleName).reflectee);
+  mirrors.ClassMirror cm = im.type;
+  
+  while (cm.superclass != null) {
+    cm.declarations.forEach((Symbol sym, dynamic dec) {
+      if (dec is mirrors.VariableMirror) {
+        if (_isSerializableVariable(dec)) {
+          data[mirrors.MirrorSystem.getName(sym)] = _serialize(im.getField(dec.simpleName).reflectee);
+        }
+      } else if (dec is mirrors.MethodMirror) {
+        if (_isSerializableGetter(dec)) {
+          data[mirrors.MirrorSystem.getName(sym)] = _serialize(im.getField(dec.simpleName).reflectee);
+        }
       }
-    } else if (dec is mirrors.MethodMirror) {
-      if (dec.isGetter && !dec.isStatic && !dec.isPrivate) {
-        data[mirrors.MirrorSystem.getName(sym)] = _serialize(im.getField(dec.simpleName).reflectee);
-      }
-    }
-  });
+    });
+    cm = cm.superclass;
+  }
   
   return data;
 }
@@ -72,3 +77,18 @@ dynamic _serialize(Object obj) {
 bool _isPrimitiveType(Object obj) {
   return obj is num || obj is String || obj is bool;
 }
+
+/**
+ * Returns true if the variable is a public instance variable.
+ */
+bool _isSerializableVariable(mirrors.VariableMirror vm) {
+  return !vm.isStatic && !vm.isFinal && !vm.isPrivate;
+}
+
+/**
+ * Returns true if the method is a public instance getter.
+ */
+bool _isSerializableGetter(mirrors.MethodMirror mm) {
+  return mm.isGetter && !mm.isStatic && !mm.isPrivate;
+}
+

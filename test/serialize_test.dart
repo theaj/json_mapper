@@ -5,8 +5,11 @@ import 'dart:convert';
 import 'package:unittest/unittest.dart' as unit;
 import 'package:json_mapper/json_mapper.dart' as jmap;
 
-class Organization {
+class Entity {
   int id;
+}
+
+class Organization extends Entity {
   String name;
   String motto;
   int yearFounded;
@@ -22,9 +25,13 @@ class Organization {
     return now.year - yearFounded;
   }
   
-  Organization(int this.id, String this.name, 
-      String this.motto, int this.yearFounded);
+  Organization(int id, String this.name, 
+      String this.motto, int this.yearFounded) {
+    super.id = id;
+  }
 }
+
+const String jsonString = '{"name":"Google","motto":"Don\'t be evil!","yearFounded":1998,"founders":["Larry Page","Sergey Brin"],"headquarters":{"city":"Mountain View","state":"California","country":"USA"},"companyAge":16,"id":1}';
 
 void main() {
   
@@ -40,9 +47,7 @@ void main() {
     unit.expect(data['founders'], unit.isList);
     unit.expect(data['headquarters'], unit.isMap);
     unit.expect(data['companyAge'], 16);
-    unit.expect('${JSON.encode(data)}', 
-        '{"id":1,"name":"Google","motto":"Don\'t be evil!","yearFounded":1998,"founders":["Larry Page","Sergey Brin"],"headquarters":{"city":"Mountain View","state":"California","country":"USA"},"companyAge":16}'
-    );
+    unit.expect('${JSON.encode(data)}', jsonString);
   });
   
   unit.test('scalar value should fail', () {
