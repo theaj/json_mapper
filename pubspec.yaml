@@ -5,4 +5,4 @@ description: Simple lightweight JSON mapping utility.
 homepage: https://github.com/TheAJ/json_mapper
 documentation: https://github.com/TheAJ/json_mapper
 dependencies:
-  unittest: any
+  unittest: '>=0.11.0 <0.12.0'
