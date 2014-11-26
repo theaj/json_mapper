@@ -1,5 +1,7 @@
-# json_mapper
+# JSON Mapper
 A Simple lightweight JSON mapping utility.
+
+[![Build Status](https://drone.io/github.com/TheAJ/json_mapper/status.png)](https://drone.io/github.com/TheAJ/json_mapper/latest)
 
 #### How do I use it?
 
